@@ -12,8 +12,19 @@ resource funcApp 'Microsoft.Web/sites@2020-12-01' = {
     type:'SystemAssigned'    
   }
   properties:{
+    clientAffinityEnabled:true
+    httpsOnly:true
     serverFarmId:planName
+    siteConfig:{
+      appSettings:[
+        {
+          name:'AzureWebJobsStorage'
+          value:storageConnectionString
+        }
+      ]
+    }
   }
+
   // resource appConfig 'config@2018-11-01' = {
   //   name: 'appsettings'
   //   properties: {

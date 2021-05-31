@@ -66,7 +66,7 @@ module functionAppModule 'FunctionApp/template.bicep' = {
   params:{
     funcAppName:funcAppName
     location:location
-    planName:aspModule.outputs.planName
+    planName:aspModule.outputs.planId
     storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString
   }
   dependsOn:[
