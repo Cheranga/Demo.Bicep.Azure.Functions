@@ -9,8 +9,7 @@ namespace Funky.Learn.Bicep
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            var services = builder.Services;
-            // TODO: register dependencies
+            // TODO: Register dependencies here
         }
     }
 }

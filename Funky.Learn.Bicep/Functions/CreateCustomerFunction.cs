@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Extensions.Http; 
 
 namespace Funky.Learn.Bicep.Functions
 {
@@ -15,7 +15,7 @@ namespace Funky.Learn.Bicep.Functions
         {
             await Task.Delay(TimeSpan.FromSeconds(2));
 
-            return new OkObjectResult("Hi!");
+            return new AcceptedResult();
         }
     }
 }

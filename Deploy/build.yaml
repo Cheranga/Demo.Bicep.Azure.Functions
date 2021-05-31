@@ -1,0 +1,28 @@
+parameters:
+  projectFiles: ""
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: Build and Restore
+    inputs:
+      command: "build"
+      projects: |
+        ${{parameters.projectFiles}}
+      arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
+
+  - task: ArchiveFiles@2
+    displayName: "Archive Files"
+    inputs:
+      rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      replaceExistingArchive: true
+
+  - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    displayName: Create function app artifact
+    artifact: drop
+
+  - publish: $(Build.Repository.LocalPath)/Deploy/Resources
+    displayName: Create ARM template artifacts
+    artifact: deploy
