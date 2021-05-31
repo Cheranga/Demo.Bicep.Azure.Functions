@@ -1,0 +1,94 @@
+parameters:
+  - name: buildNumber
+    type: string
+
+steps:
+  - task: AzureResourceManagerTemplateDeployment@3
+    condition: eq(variables['createNewRg'],true)
+    displayName: "Create resource group $(rgName)"
+    inputs:
+      deploymentScope: "Subscription"
+      azureResourceManagerConnection: "$(azureResourceManagerConnection)"
+      location: "$(rgLocation)"
+      deploymentMode: "Incremental"
+      csmFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.json"
+      csmParametersFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.parameters.json"
+      overrideParameters: |
+        -rgName "$(rgName)" 
+        -rgLocation "$(rgLocation)" 
+        -createNewRg $(createNewRg)
+
+        
+  - task: AzureCLI@2
+    displayName: "Upload ARM templates and generate SAS token"
+    inputs:
+      azureSubscription: "$(azureResourceManagerConnection)"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az storage account create -n "$(sharedStorageName)" -g "$(rgName)" -l "$(sharedStorageLocation)" 
+        az storage container create -n "$(sharedContainerName)" --account-name "$(sharedStorageName)" --auth-mode login 
+        $accountKey = (az storage account keys list -g "$(rgName)" -n "$(sharedStorageName)" | ConvertFrom-Json)[0].value
+        az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(sharedContainerName)" --account-name $(sharedStorageName) --account-key $accountKey
+        $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
+        $connection = az storage account show-connection-string -g "$(rgName)" --name "$(sharedStorageName)" --query connectionString      
+        $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
+        Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
+
+  - task: AzureCLI@2
+    displayName: "Upload ARM templates and generate SAS token"
+    inputs:
+      azureSubscription: "$(azureResourceManagerConnection)"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az storage account create -n "$(sharedStorageName)" -g "$(rgName)" -l "$(sharedStorageLocation)" 
+        az storage container create -n "$(sharedContainerName)" --account-name "$(sharedStorageName)" --auth-mode login 
+        $accountKey = (az storage account keys list -g "$(rgName)" -n "$(sharedStorageName)" | ConvertFrom-Json)[0].value
+        az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(sharedContainerName)" --account-name $(sharedStorageName) --account-key $accountKey
+        $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
+        $connection = az storage account show-connection-string -g "$(rgName)" --name "$(sharedStorageName)" --query connectionString      
+        $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
+        Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
+
+  - task: AzureCLI@2
+    displayName: "Create resource group"
+    inputs:
+      azureSubscription: "$(azureResourceManagerConnection)"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az group create -n $(rgName) -l $(rgLocation)
+
+
+  # - task: AzureResourceManagerTemplateDeployment@3
+  #   displayName: "Provision resources"
+  #   inputs:
+  #     azureResourceManagerConnection: "$(azureResourceManagerConnection)"
+  #     deploymentName: "${{parameters.buildNumber}}-main-$(funcAppName)"
+  #     deploymentScope: "Resource Group"
+  #     deploymentMode: "Incremental"
+  #     location: "$(rgLocation)"
+  #     action: "Create Or Update Resource Group"
+  #     resourceGroupName: "$(rgName)"
+  #     csmFile: "$(Pipeline.Workspace)/deploy/main.json"
+  #     overrideParameters: |
+  #       -funcAppName "$(funcAppName)" 
+  #       -templateSas "$(storageSasToken)" 
+  #       -buildNumber "${{parameters.buildNumber}}" 
+  #       -rgName "$(rgName)" 
+  #       -rgLocation "$(rgLocation)" 
+  #       -sharedStorageName "$(sharedStorageName)" 
+  #       -sharedStorageContainer "$(sharedContainerName)" 
+  #       -sgLocation "$(sgLocation)" 
+  #       -sgName "$(sgName)" 
+  #       -sgType "$(sgType)" 
+  #       -planName "$(planName)" 
+  #       -planSku "$(planSku)" 
+  #       -planTier "$(planTier)" 
+  #       -keyVaultName "$(keyVaultName)"         
+  #       -twilio.AuthToken "$(twilioAuthToken)" 
+  #       -twilio.From "$(twilioFrom)" 
+  #       -twilio.Sid "$(twilioSid)"
+  #     deploymentOutputs: ArmOutputs
+

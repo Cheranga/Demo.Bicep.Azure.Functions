@@ -31,20 +31,20 @@ stages:
             parameters:
               projectFiles: "**/*.csproj"
 
-  # - stage: DEV
-  #   dependsOn: ["Build"]
-  #   jobs:
-  #     - deployment: DEV
-  #       variables:
-  #         - template: "Variables/common.yaml"
-  #         - template: "Variables/dev.yaml"
-  #       pool:
-  #         vmImage: ${{variables.vmImage}}
-  #       environment: DEV
-  #       strategy:
-  #         runOnce:
-  #           deploy:
-  #             steps:
-  #               - template: "deploy.yaml"
-  #                 parameters:
-  #                   buildNumber: $(Build.BuildNumber)
+  - stage: DEV
+    dependsOn: ["Build"]
+    jobs:
+      - deployment: DEV
+        variables:
+          - template: "Variables/common.yaml"
+          - template: "Variables/dev.yaml"
+        pool:
+          vmImage: ${{variables.vmImage}}
+        environment: DEV
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: "deploy.yaml"
+                  parameters:
+                    buildNumber: $(Build.BuildNumber)
