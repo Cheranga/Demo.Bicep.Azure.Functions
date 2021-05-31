@@ -12,4 +12,4 @@ resource asp 'Microsoft.Web/serverfarms@2020-12-01' = {
   }
 }
 
-output planId string = asp.id
+output planId string = asp.name

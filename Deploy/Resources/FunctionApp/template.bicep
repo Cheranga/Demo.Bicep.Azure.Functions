@@ -1,43 +1,77 @@
-param functionAppName string
-param location string
-param planId string
-param appInsightsKey string
-param storageConnectionString string
+param rgName string = 'tbd'
+param location string = 'tbd'
+param functionAppName string = 'tbd'
+param planName string = 'tbd'
+param keyVaultName string = 'tbd'
+
+@secure()
+param storageAccountConnectionString string = 'tbd'
+
+@secure()
+param appInsightsKey string = 'tbd'
 
 
-resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
+var timeZone = 'AUS Eastern Standard Time'
+
+resource functionAppName_resource 'Microsoft.Web/sites@2020-12-01' = {
   name: functionAppName
+  identity:{
+    type:'SystemAssigned'    
+  }
   location: location
   kind: 'functionapp'
   properties: {
-    httpsOnly: true
-    serverFarmId: planId
-    clientAffinityEnabled: true
-    siteConfig: {
-      appSettings: [
-        {
-          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          'value': appInsightsKey
-        }
-        {
-          name: 'AzureWebJobsStorage'
-          value: storageConnectionString
-        }
-        {
-          'name': 'FUNCTIONS_EXTENSION_VERSION'
-          'value': '~3'
-        }
-        {
-          'name': 'FUNCTIONS_WORKER_RUNTIME'
-          'value': 'dotnet'
-        }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: storageConnectionString
-        }
-        // WEBSITE_CONTENTSHARE will also be auto-generated - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#website_contentshare
-        // WEBSITE_RUN_FROM_PACKAGE will be set to 1 by func azure functionapp publish
-      ]
-    }
+    serverFarmId: resourceId('Microsoft.Web/serverfarms', planName)
   }
 }
+
+resource functionAppName_slotConfigNames 'Microsoft.Web/sites/config@2018-11-01' = {
+  name: '${functionAppName_resource.name}/slotConfigNames'  
+  properties: {
+    appSettingNames: [
+      'CustomerApiKey'
+    ]
+  }
+}
+
+resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
+  name: '${functionAppName_resource.name}/appsettings'
+  properties: {
+    AzureWebJobsStorage: storageAccountConnectionString
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
+    WEBSITE_CONTENTSHARE: toLower(functionAppName)
+    FUNCTIONS_EXTENSION_VERSION: '~3'
+    APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsKey
+    FUNCTIONS_WORKER_RUNTIME: 'dotnet'
+    WEBSITE_TIME_ZONE: timeZone
+    WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG: 1
+  }
+}
+
+resource functionAppName_Staging 'Microsoft.Web/sites/slots@2016-08-01' = {
+  name: '${functionAppName_resource.name}/Staging'
+  location: location
+  kind: 'functionapp'
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    serverFarmId: planName
+  }
+}
+
+resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2016-08-01' = {
+  name: '${functionAppName_Staging.name}/appsettings'
+  properties: {
+    AzureWebJobsStorage: storageAccountConnectionString
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
+    WEBSITE_CONTENTSHARE: toLower(functionAppName)
+    FUNCTIONS_EXTENSION_VERSION: '~3'
+    APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsKey
+    FUNCTIONS_WORKER_RUNTIME: 'dotnet'
+    WEBSITE_TIME_ZONE: timeZone
+    WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG: 1
+  }
+}
+
+output masterKey string = listkeys('${resourceId(rgName, 'Microsoft.Web/sites', functionAppName)}/host/default', '2018-11-01').masterKey

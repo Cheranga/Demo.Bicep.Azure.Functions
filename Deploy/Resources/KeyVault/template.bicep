@@ -3,7 +3,7 @@ param functionAppName string = 'tbd'
 param location string = 'tbd'
 
 @secure()
-param dbConnectionString string = 'tbd'
+param storageConnectionString string = 'tbd'
 
 
 
@@ -42,10 +42,10 @@ resource keyVault 'Microsoft.KeyVault/vaults@2016-10-01' = {
       family: 'A'
     }
   }
-  resource secretDbConnectionString 'secrets' = {
+  resource secretStorageConnectionString 'secrets' = {
     name: 'dbConnectionString'
     properties: {
-      value: dbConnectionString
+      value: storageConnectionString
     }
   }
 }

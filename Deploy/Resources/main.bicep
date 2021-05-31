@@ -54,7 +54,7 @@ module keyVaultModule 'KeyVault/template.bicep' = {
     location:location
     keyVaultName:keyVaultName
     functionAppName:funcAppName
-    dbConnectionString:storageAccountModule.outputs.storageAccountConnectionString    
+    storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString    
   }
   dependsOn:[
     functionAppModule
@@ -66,9 +66,11 @@ module functionAppModule 'FunctionApp/template.bicep' = {
   params:{
     functionAppName:funcAppName
     location:location
-    planId:aspModule.outputs.planId
-    storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString
-    appInsightsKey:appInsightsModule.outputs.appInsightsKey
+    planName:planName
+    keyVaultName:keyVaultName
+    rgName:resourceGroup().name
+    storageAccountConnectionString:storageAccountModule.outputs.storageAccountConnectionString
+    appInsightsKey:appInsightsModule.outputs.appInsightsKey    
   }
   dependsOn:[
     storageAccountModule
