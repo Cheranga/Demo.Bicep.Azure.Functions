@@ -48,19 +48,34 @@ steps:
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
 
 
+  # - task: AzureCLI@2    
+  #   displayName: "Create storage account"
+  #   inputs:
+  #     azureSubscription: "$(azureResourceManagerConnection)"
+  #     scriptType: "pscore"
+  #     scriptLocation: "inlineScript"
+  #     inlineScript: |
+  #       az deployment group create `
+  #       --name storageaccountdeployment `
+  #       --resource-group "$(rgName)" `
+  #       --template-file "$(Pipeline.Workspace)/deploy/StorageAccount/template.bicep" `
+  #       --parameters "sgName=$(sgName)" `
+  #       "location=$(sgLocation)" `
+  #       "skuName=$(sgType)" 
+
   - task: AzureCLI@2    
-    displayName: "Create storage account"
+    displayName: "Provision resources"
     inputs:
       azureSubscription: "$(azureResourceManagerConnection)"
       scriptType: "pscore"
       scriptLocation: "inlineScript"
       inlineScript: |
         az deployment group create `
-        --name storageaccountdeployment `
+        --name bicepdemo `
         --resource-group "$(rgName)" `
-        --template-file "$(Pipeline.Workspace)/deploy/StorageAccount/template.bicep" `
+        --template-file "$(Pipeline.Workspace)/deploy/main.bicep" `
         --parameters "sgName=$(sgName)" `
-        "location=$(sgLocation)" `
+        "appInsName=ins-$(funcAppName)" `
         "skuName=$(sgType)" 
 
   # - task: AzureResourceManagerTemplateDeployment@3
