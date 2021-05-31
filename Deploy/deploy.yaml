@@ -61,7 +61,7 @@ steps:
         --parameters "sgName=$(sgName)" `
         "appInsName=ins-$(funcAppName)" `
         "sku=$(sgType)" `
-        "planName=$(planName)" ` 
+        "planName=$(planName)" `
         "planSku=$(planSku)" `
         "planTier=$(planTier)"`
 
