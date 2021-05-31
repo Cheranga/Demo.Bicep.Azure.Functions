@@ -64,10 +64,11 @@ module keyVaultModule 'KeyVault/template.bicep' = {
 module functionAppModule 'FunctionApp/template.bicep' = {
   name: 'functionApp'
   params:{
-    funcAppName:funcAppName
+    functionAppName:funcAppName
     location:location
-    planName:aspModule.outputs.planId
+    planId:aspModule.outputs.planId
     storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString
+    appInsightsKey:appInsightsModule.outputs.appInsightsKey
   }
   dependsOn:[
     storageAccountModule

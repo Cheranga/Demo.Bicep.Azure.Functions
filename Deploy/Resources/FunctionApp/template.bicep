@@ -1,34 +1,43 @@
-param funcAppName string
+param functionAppName string
 param location string
-param planName string
+param planId string
+param appInsightsKey string
 param storageConnectionString string
 
 
-resource funcApp 'Microsoft.Web/sites@2020-12-01' = {
-  name: funcAppName
-  kind:'functionapp'
-  location:location
-  identity:{
-    type:'SystemAssigned'    
-  }
-  properties:{
-    clientAffinityEnabled:true
-    httpsOnly:true
-    serverFarmId:planName
-    siteConfig:{
-      appSettings:[
+resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
+  name: functionAppName
+  location: location
+  kind: 'functionapp'
+  properties: {
+    httpsOnly: true
+    serverFarmId: planId
+    clientAffinityEnabled: true
+    siteConfig: {
+      appSettings: [
         {
-          name:'AzureWebJobsStorage'
-          value:storageConnectionString
+          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          'value': appInsightsKey
         }
+        {
+          name: 'AzureWebJobsStorage'
+          value: storageConnectionString
+        }
+        {
+          'name': 'FUNCTIONS_EXTENSION_VERSION'
+          'value': '~3'
+        }
+        {
+          'name': 'FUNCTIONS_WORKER_RUNTIME'
+          'value': 'dotnet'
+        }
+        {
+          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+          value: storageConnectionString
+        }
+        // WEBSITE_CONTENTSHARE will also be auto-generated - https://docs.microsoft.com/en-us/azure/azure-functions/functions-app-settings#website_contentshare
+        // WEBSITE_RUN_FROM_PACKAGE will be set to 1 by func azure functionapp publish
       ]
     }
   }
-
-  // resource appConfig 'config@2018-11-01' = {
-  //   name: 'appsettings'
-  //   properties: {
-  //     AzureWebJobsStorage: storageConnectionString
-  //   }
-  // }  
 }
