@@ -1,0 +1,5 @@
+variables:
+  - name: environmentName
+    value: dev
+  - name: createNewRg
+    value: true

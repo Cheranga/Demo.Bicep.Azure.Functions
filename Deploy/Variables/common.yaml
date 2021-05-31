@@ -1,0 +1,30 @@
+variables:
+  - group: FunkyDemo
+  - name: createNewRg
+    value: false
+  - name: funcAppName
+    value: cc-fn-bicep-$(environmentName)
+  - name: keyVaultName
+    value: cc-kv-bicep-$(environmentName)
+  - name: rgName
+    value: cc-rg-bicep-$(environmentName)
+  - name: rgLocation
+    value: Australia Southeast
+  - name: sharedStorageName
+    value: "ccsgarmtemplates$(environmentName)"
+  - name: sharedStorageLocation
+    value: Australia Southeast
+  - name: sharedContainerName
+    value: "ccbicepdemo$(environmentName)"
+  - name: sgName
+    value: "ccsgbicepdemo$(environmentName)"
+  - name: sgLocation
+    value: Australia Southeast
+  - name: sgType
+    value: Standard_GRS
+  - name: planName
+    value: "plan-cc-bicepdemo-$(environmentName)"
+  - name: planSku
+    value: Y1
+  - name: planTier
+    value: Dynamic
