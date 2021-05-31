@@ -14,10 +14,10 @@ resource funcApp 'Microsoft.Web/sites@2020-12-01' = {
   properties:{
     serverFarmId:planName
   }
-  resource appConfig 'config@2020-12-01' = {
-    name: 'appsettings'
-    properties: {
-      AzureWebJobsStorage: storageConnectionString
-    }
-  }  
+  // resource appConfig 'config@2018-11-01' = {
+  //   name: 'appsettings'
+  //   properties: {
+  //     AzureWebJobsStorage: storageConnectionString
+  //   }
+  // }  
 }
