@@ -64,7 +64,9 @@ steps:
         "sku=$(sgType)" `
         "planName=$(planName)" `
         "planSku=$(planSku)" `
-        "planTier=$planTier"
+        "planTier=$planTier" `
+        "keyVaultName=$keyVaultName" `
+        "funcAppName=$funcAppName"
 
   # - task: AzureResourceManagerTemplateDeployment@3
   #   displayName: "Provision resources"

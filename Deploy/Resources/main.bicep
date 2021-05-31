@@ -16,6 +16,8 @@ param appInsName string = 'tbd'
 param planName string = 'tbd'
 param planSku string = 'tbd'
 param planTier string = 'tbd'
+param keyVaultName string = 'tbd'
+param funcAppName string = 'tbd'
 
 module storageAccountModule './StorageAccount/template.bicep' = {
   name: 'storageAccount'
@@ -36,8 +38,6 @@ module appInsightsModule 'AppInsights/template.bicep' = {
   }
 }
 
-output appInsightsKey string = appInsightsModule.outputs.appInsightsKey
-
 module aspModule 'AppServicePlan/template.bicep' = {
   name:'appServicePlan'
   params:{
@@ -46,5 +46,33 @@ module aspModule 'AppServicePlan/template.bicep' = {
     planSku:planSku
     planTier:planTier
   }
+}
+
+module keyVaultModule 'KeyVault/template.bicep' = {
+  name:'keyVault'
+  params:{
+    location:location
+    keyVaultName:keyVaultName
+    functionAppName:funcAppName
+    dbConnectionString:storageAccountModule.outputs.storageAccountConnectionString    
+  }
+  dependsOn:[
+    functionAppModule
+  ]
+}
+
+module functionAppModule 'FunctionApp/template.bicep' = {
+  name: 'functionApp'
+  params:{
+    funcAppName:funcAppName
+    location:location
+    planName:planName
+    storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString
+  }
+  dependsOn:[
+    storageAccountModule
+    aspModule
+    appInsightsModule
+  ] 
 }
 
