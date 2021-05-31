@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
 
 @minLength(3)
-@maxLength(11)
+@maxLength(24)
 @description('The name of the storage account')
 param sgName string = 'tbd'
 
