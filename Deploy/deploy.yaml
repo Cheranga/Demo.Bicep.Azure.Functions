@@ -58,12 +58,12 @@ steps:
         --name bicepdemo `
         --resource-group "$(rgName)" `
         --template-file "$(Pipeline.Workspace)/deploy/main.bicep" `
-        --parameters sgName=$(sgName) `
-        appInsName=ins-$(funcAppName) `
-        sku=$(sgType) `
-        planName=$(planName) ` 
-        planSku=$(planSku) `
-        planTier=$(planTier)`
+        --parameters "sgName=$(sgName)" `
+        "appInsName=ins-$(funcAppName)" `
+        "sku=$(sgType)" `
+        "planName=$(planName)" ` 
+        "planSku=$(planSku)" `
+        "planTier=$(planTier)"`
 
   # - task: AzureResourceManagerTemplateDeployment@3
   #   displayName: "Provision resources"
