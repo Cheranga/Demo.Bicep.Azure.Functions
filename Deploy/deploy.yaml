@@ -3,20 +3,31 @@ parameters:
     type: string
 
 steps:
-  - task: AzureResourceManagerTemplateDeployment@3
+
+  - task: AzureCLI@2
     condition: eq(variables['createNewRg'],true)
-    displayName: "Create resource group $(rgName)"
+    displayName: "Create resource group"
     inputs:
-      deploymentScope: "Subscription"
-      azureResourceManagerConnection: "$(azureResourceManagerConnection)"
-      location: "$(rgLocation)"
-      deploymentMode: "Incremental"
-      csmFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.json"
-      csmParametersFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.parameters.json"
-      overrideParameters: |
-        -rgName "$(rgName)" 
-        -rgLocation "$(rgLocation)" 
-        -createNewRg $(createNewRg)
+      azureSubscription: "$(azureResourceManagerConnection)"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az group create -n $(rgName) -l $(rgLocation)
+
+  # - task: AzureResourceManagerTemplateDeployment@3
+  #   condition: eq(variables['createNewRg'],true)
+  #   displayName: "Create resource group $(rgName)"
+  #   inputs:
+  #     deploymentScope: "Subscription"
+  #     azureResourceManagerConnection: "$(azureResourceManagerConnection)"
+  #     location: "$(rgLocation)"
+  #     deploymentMode: "Incremental"
+  #     csmFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.json"
+  #     csmParametersFile: "$(Pipeline.Workspace)/deploy/ResourceGroup/template.parameters.json"
+  #     overrideParameters: |
+  #       -rgName "$(rgName)" 
+  #       -rgLocation "$(rgLocation)" 
+  #       -createNewRg $(createNewRg)
 
         
   - task: AzureCLI@2
@@ -50,15 +61,6 @@ steps:
         $connection = az storage account show-connection-string -g "$(rgName)" --name "$(sharedStorageName)" --query connectionString      
         $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
         Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
-
-  - task: AzureCLI@2
-    displayName: "Create resource group"
-    inputs:
-      azureSubscription: "$(azureResourceManagerConnection)"
-      scriptType: "pscore"
-      scriptLocation: "inlineScript"
-      inlineScript: |
-        az group create -n $(rgName) -l $(rgLocation)
 
 
   # - task: AzureResourceManagerTemplateDeployment@3
