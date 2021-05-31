@@ -23,7 +23,7 @@ variables:
   - name: sgType
     value: Standard_GRS
   - name: planName
-    value: "plan-cc-bicepdemo-$(environmentName)"
+    value: plan-cc-bicepdemo-$(environmentName)
   - name: planSku
     value: Y1
   - name: planTier
