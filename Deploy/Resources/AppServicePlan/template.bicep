@@ -3,7 +3,7 @@ param planLocation string = resourceGroup().location
 param planSku string ='Y1'
 param planTier string = 'Dynamic'
 
-resource blah 'Microsoft.Web/serverfarms@2020-12-01' = {
+resource asp 'Microsoft.Web/serverfarms@2020-12-01' = {
   name:planName
   location:planLocation
   sku:{
@@ -11,3 +11,5 @@ resource blah 'Microsoft.Web/serverfarms@2020-12-01' = {
     tier:planTier
   }
 }
+
+output planName string = asp.name

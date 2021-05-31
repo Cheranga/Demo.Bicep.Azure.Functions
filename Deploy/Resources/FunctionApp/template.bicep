@@ -12,7 +12,7 @@ resource funcApp 'Microsoft.Web/sites@2020-12-01' = {
     type:'SystemAssigned'    
   }
   properties:{
-    serverFarmId:resourceId('Microsoft.Web/Serverfarms', planName)
+    serverFarmId:planName
   }
   resource appConfig 'config@2020-12-01' = {
     name: 'appsettings'
