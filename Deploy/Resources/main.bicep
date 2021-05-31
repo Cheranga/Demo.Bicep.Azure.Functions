@@ -13,6 +13,10 @@ param sku string = 'Standard_GRS'
 
 param appInsName string = 'tbd'
 
+param planName string = 'tbd'
+param planSku string = 'tbd'
+param planTier string = 'tbd'
+
 module storageAccountModule './StorageAccount/template.bicep' = {
   name: 'storageAccount'
   params: {
@@ -33,4 +37,14 @@ module appInsightsModule 'AppInsights/template.bicep' = {
 }
 
 output appInsightsKey string = appInsightsModule.outputs.appInsightsKey
+
+module aspModule 'AppServicePlan/template.bicep' = {
+  name:'appServicePlan'
+  params:{
+    planName:planName
+    planLocation:location
+    planSku:planSku
+    planTier:planTier
+  }
+}
 
