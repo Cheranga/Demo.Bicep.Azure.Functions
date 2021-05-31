@@ -76,7 +76,7 @@ steps:
         --template-file "$(Pipeline.Workspace)/deploy/main.bicep" `
         --parameters "sgName=$(sgName)" `
         "appInsName=ins-$(funcAppName)" `
-        "skuName=$(sgType)" 
+        "sku=$(sgType)" 
 
   # - task: AzureResourceManagerTemplateDeployment@3
   #   displayName: "Provision resources"
