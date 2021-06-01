@@ -32,6 +32,9 @@ resource functionAppName_slotConfigNames 'Microsoft.Web/sites/config@2018-11-01'
       'CustomerApiKey'
     ]
   }
+  dependsOn:[
+    functionAppName_resource
+  ]
 }
 
 resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
