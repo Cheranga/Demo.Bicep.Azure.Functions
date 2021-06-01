@@ -15,22 +15,6 @@ steps:
         az group create -n "$(rgName)" -l "$(rgLocation)"
 
 
-  - task: AzureCLI@2
-    displayName: "Upload ARM templates and generate SAS token"
-    inputs:
-      azureSubscription: "$(azureResourceManagerConnection)"
-      scriptType: "pscore"
-      scriptLocation: "inlineScript"
-      inlineScript: |
-        az storage account create -n "$(sharedStorageName)" -g "$(rgName)" -l "$(sharedStorageLocation)" 
-        az storage container create -n "$(sharedContainerName)" --account-name "$(sharedStorageName)" --auth-mode login 
-        $accountKey = (az storage account keys list -g "$(rgName)" -n "$(sharedStorageName)" | ConvertFrom-Json)[0].value
-        az storage blob upload-batch --source "$(Pipeline.Workspace)/deploy/" --pattern *.json --destination "$(sharedContainerName)" --account-name $(sharedStorageName) --account-key $accountKey
-        $expireTime = $(date -u -d '30 minutes' +%Y-%m-%dT%H:%MZ)
-        $connection = az storage account show-connection-string -g "$(rgName)" --name "$(sharedStorageName)" --query connectionString      
-        $token = az storage container generate-sas --name $(sharedContainerName) --expiry $expireTime --permissions r --output tsv --connection-string $connection
-        Write-Host "##vso[task.setvariable variable=storageSasToken]$token"
-
   - task: AzureCLI@2    
     displayName: "Provision resources"
     inputs:
