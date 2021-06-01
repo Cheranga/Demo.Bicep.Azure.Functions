@@ -40,6 +40,7 @@ resource functionAppName_slotConfigNames 'Microsoft.Web/sites/config@2018-11-01'
 resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
   name: '${functionAppName_resource.name}/appsettings'
   properties: {
+    CustomerApiKey: 'This is the production setting'
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(functionAppName)
@@ -72,6 +73,7 @@ resource functionAppName_Staging 'Microsoft.Web/sites/slots@2016-08-01' = {
 resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2016-08-01' = {
   name: '${functionAppName_Staging.name}/appsettings'
   properties: {
+    CustomerApiKey: 'This is the staging setting'
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(functionAppName)
