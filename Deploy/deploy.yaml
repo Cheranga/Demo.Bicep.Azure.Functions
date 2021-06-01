@@ -13,6 +13,7 @@ steps:
       inlineScript: |
         $ifExists = az group exists -n "$(rgName)"
         if ($ifExists -eq 'false') {
+          echo 'creating the resource group'
           az group create -n "$(rgName)" -l "$(rgLocation)"
         }       
 
