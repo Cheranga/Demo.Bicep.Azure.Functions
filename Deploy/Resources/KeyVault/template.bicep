@@ -49,3 +49,16 @@ resource keyVault 'Microsoft.KeyVault/vaults@2016-10-01' = {
     }
   }
 }
+
+
+resource someSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  name: '${keyVaultName}/someSecret'
+  properties: {
+    value: storageConnectionString
+  }
+}
+
+output someSecretReference string = someSecret.properties.secretUri
+
+
+
