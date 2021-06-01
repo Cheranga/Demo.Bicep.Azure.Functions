@@ -49,6 +49,9 @@ resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
     WEBSITE_TIME_ZONE: timeZone
     WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG: 1
   }
+  dependsOn:[
+    functionAppName_resource
+  ]
 }
 
 resource functionAppName_Staging 'Microsoft.Web/sites/slots@2016-08-01' = {
@@ -61,6 +64,9 @@ resource functionAppName_Staging 'Microsoft.Web/sites/slots@2016-08-01' = {
   properties: {
     serverFarmId: planName
   }
+  dependsOn:[
+    functionAppName_resource
+  ]
 }
 
 resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2016-08-01' = {
@@ -75,6 +81,9 @@ resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2
     WEBSITE_TIME_ZONE: timeZone
     WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG: 1
   }
+  dependsOn:[
+    functionAppName_Staging
+  ]
 }
 
 output masterKey string = listkeys('${resourceId(rgName, 'Microsoft.Web/sites', functionAppName)}/host/default', '2018-11-01').masterKey
