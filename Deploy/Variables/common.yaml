@@ -1,7 +1,5 @@
 variables:
-  - group: FunkyDemo
-  - name: createNewRg
-    value: false
+  - group: FunkyDemo  
   - name: funcAppName
     value: cc-fn-bicep-$(environmentName)
   - name: keyVaultName
