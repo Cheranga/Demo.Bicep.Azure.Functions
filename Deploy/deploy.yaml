@@ -4,15 +4,17 @@ parameters:
 
 steps:
 
-  - task: AzureCLI@2
-    condition: eq(variables['createNewRg'],true)
+  - task: AzureCLI@2    
     displayName: "Create resource group"
     inputs:
       azureSubscription: "$(azureResourceManagerConnection)"
       scriptType: "pscore"
       scriptLocation: "inlineScript"
       inlineScript: |
-        az group create -n "$(rgName)" -l "$(rgLocation)"
+        $ifExists = az group exists -n "$(rgName)"
+        if ($ifExists -eq 'false') {
+          az group create -n "$(rgName)" -l "$(rgLocation)"
+        }       
 
 
   - task: AzureCLI@2    
