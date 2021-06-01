@@ -12,8 +12,9 @@ param appInsightsKey string = 'tbd'
 
 
 var timeZone = 'AUS Eastern Standard Time'
+var dbConnectionString = '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/secretStorageConnectionString/)'
 
-resource functionAppName_resource 'Microsoft.Web/sites@2020-12-01' = {
+resource functionAppResource 'Microsoft.Web/sites@2020-12-01' = {
   name: functionAppName
   identity:{
     type:'SystemAssigned'    
@@ -26,21 +27,22 @@ resource functionAppName_resource 'Microsoft.Web/sites@2020-12-01' = {
 }
 
 resource functionAppName_slotConfigNames 'Microsoft.Web/sites/config@2018-11-01' = {
-  name: '${functionAppName_resource.name}/slotConfigNames'  
+  name: '${functionAppResource.name}/slotConfigNames'  
   properties: {
     appSettingNames: [
       'CustomerApiKey'
     ]
   }
   dependsOn:[
-    functionAppName_resource
+    functionAppResource
   ]
 }
 
 resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
-  name: '${functionAppName_resource.name}/appsettings'
+  name: '${functionAppResource.name}/appsettings'
   properties: {
     CustomerApiKey: 'This is the production setting'
+    databaseConnectionString: dbConnectionString
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(functionAppName)
@@ -51,12 +53,12 @@ resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
     WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG: 1
   }
   dependsOn:[
-    functionAppName_resource
+    functionAppResource
   ]
 }
 
-resource functionAppName_Staging 'Microsoft.Web/sites/slots@2016-08-01' = {
-  name: '${functionAppName_resource.name}/Staging'
+resource functionAppStagingSlot 'Microsoft.Web/sites/slots@2016-08-01' = {
+  name: '${functionAppResource.name}/Staging'
   location: location
   kind: 'functionapp'
   identity: {
@@ -66,14 +68,15 @@ resource functionAppName_Staging 'Microsoft.Web/sites/slots@2016-08-01' = {
     serverFarmId: planName
   }
   dependsOn:[
-    functionAppName_resource
+    functionAppResource
   ]
 }
 
 resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2016-08-01' = {
-  name: '${functionAppName_Staging.name}/appsettings'
+  name: '${functionAppStagingSlot.name}/appsettings'
   properties: {
     CustomerApiKey: 'This is the staging setting'
+    databaseConnectionString: dbConnectionString
     AzureWebJobsStorage: storageAccountConnectionString
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: toLower(functionAppName)
@@ -84,7 +87,7 @@ resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2
     WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG: 1
   }
   dependsOn:[
-    functionAppName_Staging
+    functionAppStagingSlot
   ]
 }
 
