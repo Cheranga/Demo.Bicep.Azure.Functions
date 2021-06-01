@@ -53,8 +53,7 @@ steps:
       azureSubscription: "$(azureResourceManagerConnection)"
       scriptType: "pscore"
       scriptLocation: "inlineScript"
-      inlineScript: |
-        
+      inlineScript: |        
         az deployment group create `
         --name bicepdemo `
         --resource-group "$(rgName)" `
@@ -64,9 +63,9 @@ steps:
         "sku=$(sgType)" `
         "planName=$(planName)" `
         "planSku=$(planSku)" `
-        "planTier=$planTier" `
-        "keyVaultName=$keyVaultName" `
-        "funcAppName=$funcAppName"
+        "planTier=$(planTier)" `
+        "keyVaultName=$(keyVaultName)" `
+        "funcAppName=$(funcAppName)"
 
   # - task: AzureResourceManagerTemplateDeployment@3
   #   displayName: "Provision resources"
