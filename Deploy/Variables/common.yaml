@@ -8,12 +8,6 @@ variables:
     value: cc-rg-bicep-$(environmentName)
   - name: rgLocation
     value: Australia Southeast
-  - name: sharedStorageName
-    value: "ccsgarmtemplates$(environmentName)"
-  - name: sharedStorageLocation
-    value: Australia Southeast
-  - name: sharedContainerName
-    value: "ccbicepdemo$(environmentName)"
   - name: sgName
     value: "ccsgbicepdemo$(environmentName)"
   - name: sgLocation
