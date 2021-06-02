@@ -27,7 +27,7 @@ steps:
       inlineScript: |    
         $currentBuild = "$(Build.BuildNumber)"
 
-        echo 'The current build is $currentBuild'
+        echo 'The current build is $(currentBuild)'
 
         az deployment group create `
         --name bicepdemo `
