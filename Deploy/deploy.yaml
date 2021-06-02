@@ -24,7 +24,11 @@ steps:
       azureSubscription: "$(azureResourceManagerConnection)"
       scriptType: "pscore"
       scriptLocation: "inlineScript"
-      inlineScript: |        
+      inlineScript: |    
+        $currentBuild = ${{parameters.buildNumber}}
+
+        echo 'The current build is $currentBuild'
+
         az deployment group create `
         --name bicepdemo `
         --resource-group "$(rgName)" `

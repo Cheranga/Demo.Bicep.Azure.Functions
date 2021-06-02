@@ -9,7 +9,7 @@ param dbConnectionStringSecretUri string
 var dbConnectionString = '@Microsoft.KeyVault(SecretUri=${dbConnectionStringSecretUri}/)'
 
 
-resource functionAppName_slotConfigNames 'Microsoft.Web/sites/config@2018-11-01' = {
+resource functionAppSlotConfigNames 'Microsoft.Web/sites/config@2018-11-01' = {
   name: '${functionAppName}/slotConfigNames'  
   properties: {
     appSettingNames: [
@@ -18,7 +18,7 @@ resource functionAppName_slotConfigNames 'Microsoft.Web/sites/config@2018-11-01'
   }
 }
 
-resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
+resource functionAppAppsettings 'Microsoft.Web/sites/config@2018-11-01' = {
   name: '${functionAppName}/appsettings'
   properties: {
     CustomerApiKey: 'This is the production setting'
@@ -34,7 +34,7 @@ resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
   }
 }
 
-resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2016-08-01' = {
+resource functionAppStagingAppsettings 'Microsoft.Web/sites/slots/config@2016-08-01' = {
   name: '${functionAppStagingName}/appsettings'
   properties: {
     CustomerApiKey: 'This is the staging setting'
