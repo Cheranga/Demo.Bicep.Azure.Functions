@@ -54,6 +54,9 @@ resource dbConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01'
   properties: {
     value: storageConnectionString
   }
+  dependsOn:[
+    keyVault
+  ]
 }
 
 output dbConnectionStringUri string = dbConnectionStringSecret.properties.secretUri
