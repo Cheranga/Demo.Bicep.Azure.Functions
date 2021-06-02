@@ -32,7 +32,7 @@ module storageAccountModule './StorageAccount/template.bicep' = {
 output storageEndpoint string = storageAccountModule.outputs.storageAccountConnectionString
 
 module appInsightsModule 'AppInsights/template.bicep' = {
-  name:'appInsights${buildNumber}'
+  name:'appInsights-${buildNumber}'
   params:{
     name:appInsName
     rgLocation:location
@@ -40,7 +40,7 @@ module appInsightsModule 'AppInsights/template.bicep' = {
 }
 
 module aspModule 'AppServicePlan/template.bicep' = {
-  name:'appServicePlan'
+  name:'appServicePlan-${buildNumber}'
   params:{
     planName:planName
     planLocation:location
@@ -50,7 +50,7 @@ module aspModule 'AppServicePlan/template.bicep' = {
 }
 
 module keyVaultModule 'KeyVault/template.bicep' = {
-  name:'keyVault'
+  name:'keyVault-${buildNumber}'
   params:{
     location:location
     keyVaultName:keyVaultName
@@ -67,7 +67,7 @@ module keyVaultModule 'KeyVault/template.bicep' = {
 }
 
 module functionAppModule 'FunctionApp/template.bicep' = {
-  name: 'functionApp'
+  name: 'functionApp-${buildNumber}'
   params:{
     location:location
     rgName:resourceGroup().name
@@ -81,7 +81,7 @@ module functionAppModule 'FunctionApp/template.bicep' = {
 }
 
 module functionAppSettingsModule 'FunctionAppSettings/template.bicep' = {
-  name: 'functionAppSettings'
+  name: 'functionAppSettings-${buildNumber}'
   params: {
     appInsightsKey: appInsightsModule.outputs.appInsightsKey
     dbConnectionStringSecretUri: keyVaultModule.outputs.dbConnectionStringUri
