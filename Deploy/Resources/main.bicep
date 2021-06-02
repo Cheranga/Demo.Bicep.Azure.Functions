@@ -84,7 +84,8 @@ module functionAppSettingsModule 'FunctionAppSettings/template.bicep' = {
   params: {
     appInsightsKey: appInsightsModule.outputs.appInsightsKey
     dbConnectionStringSecretUri: keyVaultModule.outputs.dbConnectionStringUri
-    functionAppName: funcAppName
+    functionAppName: functionAppModule.outputs.prodFunctionAppName
+    functionAppStagingName: functionAppModule.outputs.stagingFunctionAppName
     storageAccountConnectionString: storageAccountModule.outputs.storageAccountConnectionString
   }  
   dependsOn:[

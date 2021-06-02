@@ -1,4 +1,5 @@
 param functionAppName string
+param functionAppStagingName string
 param storageAccountConnectionString string
 param appInsightsKey string
 param timeZone string = 'AUS Eastern Standard Time'
@@ -34,7 +35,7 @@ resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
 }
 
 resource functionAppName_Staging_appsettings 'Microsoft.Web/sites/slots/config@2016-08-01' = {
-  name: '${functionAppName}/Staging/appsettings'
+  name: '${functionAppStagingName}/appsettings'
   properties: {
     CustomerApiKey: 'This is the staging setting'
     databaseConnectionString: dbConnectionString
