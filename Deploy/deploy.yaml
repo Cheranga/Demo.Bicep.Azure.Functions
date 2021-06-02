@@ -25,15 +25,12 @@ steps:
       scriptType: "pscore"
       scriptLocation: "inlineScript"
       inlineScript: |    
-        $currentBuild = "$(Build.BuildNumber)"
-
-        echo 'The current build is $(currentBuild)'
-
         az deployment group create `
         --name bicepdemo `
         --resource-group "$(rgName)" `
         --template-file "$(Pipeline.Workspace)/deploy/main.bicep" `
         --parameters "sgName=$(sgName)" `
+        "buildNumber=$(Build.BuildNumber)" `
         "appInsName=ins-$(funcAppName)" `
         "sku=$(sgType)" `
         "planName=$(planName)" `

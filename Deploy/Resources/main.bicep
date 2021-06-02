@@ -1,3 +1,4 @@
+param buildNumber string
 param location string = resourceGroup().location
 
 @minLength(3)
@@ -31,7 +32,7 @@ module storageAccountModule './StorageAccount/template.bicep' = {
 output storageEndpoint string = storageAccountModule.outputs.storageAccountConnectionString
 
 module appInsightsModule 'AppInsights/template.bicep' = {
-  name:'appInsights'
+  name:'appInsights${buildNumber}'
   params:{
     name:appInsName
     rgLocation:location
