@@ -54,7 +54,11 @@ module keyVaultModule 'KeyVault/template.bicep' = {
     location:location
     keyVaultName:keyVaultName
     functionAppName:funcAppName
-    storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString    
+    storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString
+    productionPrincipalId:functionAppModule.outputs.productionPrincipalId
+    productionTenantId:functionAppModule.outputs.productionTenantId
+    stagingPrincipalId:functionAppModule.outputs.stagingPrincipalId
+    stagingTenantId:functionAppModule.outputs.stagingTenantId         
   }
   dependsOn:[
     functionAppModule
@@ -64,18 +68,29 @@ module keyVaultModule 'KeyVault/template.bicep' = {
 module functionAppModule 'FunctionApp/template.bicep' = {
   name: 'functionApp'
   params:{
-    rgName:resourceGroup().name
     location:location
+    rgName:resourceGroup().name
     functionAppName:funcAppName
     planName:aspModule.outputs.planId
-    keyVaultName:keyVaultName
-    storageAccountConnectionString:storageAccountModule.outputs.storageAccountConnectionString
-    appInsightsKey:appInsightsModule.outputs.appInsightsKey    
   }
   dependsOn:[
     storageAccountModule
     aspModule
-    appInsightsModule
   ] 
+}
+
+module functionAppSettingsModule 'FunctionAppSettings/template.bicep' = {
+  name: 'functionAppSettings'
+  params: {
+    appInsightsKey: appInsightsModule.outputs.appInsightsKey
+    dbConnectionStringSecretUri: keyVaultModule.outputs.dbConnectionStringUri
+    functionAppName: funcAppName
+    storageAccountConnectionString: storageAccountModule.outputs.storageAccountConnectionString
+  }  
+  dependsOn:[
+    functionAppModule
+    appInsightsModule
+    keyVaultModule
+  ]
 }
 

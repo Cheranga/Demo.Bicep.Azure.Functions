@@ -1,6 +1,10 @@
+param location string = 'tbd'
 param keyVaultName string = 'tbd'
 param functionAppName string = 'tbd'
-param location string = 'tbd'
+param productionPrincipalId string
+param productionTenantId string
+param stagingPrincipalId string
+param stagingTenantId string
 
 @secure()
 param storageConnectionString string = 'tbd'
@@ -17,8 +21,8 @@ resource keyVault 'Microsoft.KeyVault/vaults@2016-10-01' = {
     tenantId: reference(resourceId('Microsoft.Web/sites', functionAppName), '2019-08-01', 'full').identity.tenantId
     accessPolicies: [
       {
-        tenantId: reference(resourceId('Microsoft.Web/sites', functionAppName), '2019-08-01', 'full').identity.tenantId
-        objectId: reference(resourceId('Microsoft.Web/sites', functionAppName), '2019-08-01', 'full').identity.principalId
+        tenantId: productionTenantId
+        objectId: productionPrincipalId
         permissions: {
           secrets: [
             'get'
@@ -27,8 +31,8 @@ resource keyVault 'Microsoft.KeyVault/vaults@2016-10-01' = {
         }
       }
       {
-        tenantId: reference(resourceId('Microsoft.Web/sites/slots', functionAppName, 'Staging'), '2019-08-01', 'full').identity.tenantId
-        objectId: reference(resourceId('Microsoft.Web/sites/slots', functionAppName, 'Staging'), '2019-08-01', 'full').identity.principalId
+        tenantId: stagingTenantId
+        objectId: stagingPrincipalId
         permissions: {
           secrets: [
             'get'
@@ -45,14 +49,14 @@ resource keyVault 'Microsoft.KeyVault/vaults@2016-10-01' = {
 }
 
 
-resource dbConnectionString 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+resource dbConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   name: '${keyVaultName}/dbConnectionString'
   properties: {
     value: storageConnectionString
   }
 }
 
-output dbConnectionStringUri string = dbConnectionString.properties.secretUri
+output dbConnectionStringUri string = dbConnectionStringSecret.properties.secretUri
 
 
 
