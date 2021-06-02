@@ -1,3 +1,4 @@
+param buildNumber string
 param location string = resourceGroup().location
 
 @minLength(3)
@@ -20,7 +21,7 @@ param keyVaultName string = 'tbd'
 param funcAppName string = 'tbd'
 
 module storageAccountModule './StorageAccount/template.bicep' = {
-  name: 'storageAccount'
+  name: 'storageAccount-${buildNumber}'
   params: {
     sgName:sgName
     location:location
@@ -28,10 +29,8 @@ module storageAccountModule './StorageAccount/template.bicep' = {
   }
 }
 
-output storageEndpoint string = storageAccountModule.outputs.storageAccountConnectionString
-
 module appInsightsModule 'AppInsights/template.bicep' = {
-  name:'appInsights'
+  name:'appInsights-${buildNumber}'
   params:{
     name:appInsName
     rgLocation:location
@@ -39,7 +38,7 @@ module appInsightsModule 'AppInsights/template.bicep' = {
 }
 
 module aspModule 'AppServicePlan/template.bicep' = {
-  name:'appServicePlan'
+  name:'appServicePlan-${buildNumber}'
   params:{
     planName:planName
     planLocation:location
@@ -49,12 +48,16 @@ module aspModule 'AppServicePlan/template.bicep' = {
 }
 
 module keyVaultModule 'KeyVault/template.bicep' = {
-  name:'keyVault'
+  name:'keyVault-${buildNumber}'
   params:{
     location:location
     keyVaultName:keyVaultName
     functionAppName:funcAppName
-    storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString    
+    storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString
+    productionPrincipalId:functionAppModule.outputs.productionPrincipalId
+    productionTenantId:functionAppModule.outputs.productionTenantId
+    stagingPrincipalId:functionAppModule.outputs.stagingPrincipalId
+    stagingTenantId:functionAppModule.outputs.stagingTenantId         
   }
   dependsOn:[
     functionAppModule
@@ -62,20 +65,32 @@ module keyVaultModule 'KeyVault/template.bicep' = {
 }
 
 module functionAppModule 'FunctionApp/template.bicep' = {
-  name: 'functionApp'
+  name: 'functionApp-${buildNumber}'
   params:{
-    rgName:resourceGroup().name
     location:location
+    rgName:resourceGroup().name
     functionAppName:funcAppName
     planName:aspModule.outputs.planId
-    keyVaultName:keyVaultName
-    storageAccountConnectionString:storageAccountModule.outputs.storageAccountConnectionString
-    appInsightsKey:appInsightsModule.outputs.appInsightsKey    
   }
   dependsOn:[
     storageAccountModule
     aspModule
-    appInsightsModule
   ] 
+}
+
+module functionAppSettingsModule 'FunctionAppSettings/template.bicep' = {
+  name: 'functionAppSettings-${buildNumber}'
+  params: {
+    appInsightsKey: appInsightsModule.outputs.appInsightsKey
+    dbConnectionStringSecretUri: keyVaultModule.outputs.dbConnectionStringUri
+    functionAppName: functionAppModule.outputs.prodFunctionAppName
+    functionAppStagingName: functionAppModule.outputs.stagingFunctionAppName
+    storageAccountConnectionString: storageAccountModule.outputs.storageAccountConnectionString
+  }  
+  dependsOn:[
+    functionAppModule
+    appInsightsModule
+    keyVaultModule
+  ]
 }
 
