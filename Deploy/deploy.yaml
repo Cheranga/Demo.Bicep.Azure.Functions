@@ -25,7 +25,7 @@ steps:
       scriptType: "pscore"
       scriptLocation: "inlineScript"
       inlineScript: |    
-        $currentBuild = "$(buildNumber)"
+        $currentBuild = "$(parameters.buildNumber)"
 
         echo 'The current build is $currentBuild'
 
