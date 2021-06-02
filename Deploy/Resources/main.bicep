@@ -21,15 +21,13 @@ param keyVaultName string = 'tbd'
 param funcAppName string = 'tbd'
 
 module storageAccountModule './StorageAccount/template.bicep' = {
-  name: 'storageAccount'
+  name: 'storageAccount-${buildNumber}'
   params: {
     sgName:sgName
     location:location
     sku:sku
   }
 }
-
-output storageEndpoint string = storageAccountModule.outputs.storageAccountConnectionString
 
 module appInsightsModule 'AppInsights/template.bicep' = {
   name:'appInsights-${buildNumber}'
