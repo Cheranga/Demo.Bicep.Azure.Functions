@@ -5,9 +5,7 @@ param appInsightsKey string
 param timeZone string = 'AUS Eastern Standard Time'
 param dbConnectionStringSecretUri string
 
-
 var dbConnectionString = '@Microsoft.KeyVault(SecretUri=${dbConnectionStringSecretUri}/)'
-
 
 resource functionAppSlotConfigNames 'Microsoft.Web/sites/config@2018-11-01' = {
   name: '${functionAppName}/slotConfigNames'  

@@ -49,3 +49,21 @@ stages:
                 - template: "deploy.yaml"
                   parameters:
                     buildNumber: $(Build.BuildNumber)
+
+  - stage: SIT
+    dependsOn: ["DEV"]
+    jobs:
+      - deployment: SIT
+        variables:
+          - template: "Variables/common.yaml"
+          - template: "Variables/sit.yaml"
+        pool:
+          vmImage: ${{variables.vmImage}}
+        environment: SIT
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: "deploy.yaml"
+                  parameters:
+                    buildNumber: $(Build.BuildNumber)
