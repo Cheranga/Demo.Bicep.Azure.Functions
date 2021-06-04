@@ -13,7 +13,6 @@ param sgName string = 'tbd'
 param sku string = 'Standard_GRS'
 
 param appInsName string = 'tbd'
-
 param planName string = 'tbd'
 param planSku string = 'tbd'
 param planTier string = 'tbd'
@@ -28,6 +27,34 @@ module storageAccountModule './StorageAccount/template.bicep' = {
     sku:sku
   }
 }
+
+
+module blah 'StorageAccount/template.bicep'=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module appInsightsModule 'AppInsights/template.bicep' = {
   name:'appInsights-${buildNumber}'
@@ -68,7 +95,6 @@ module functionAppModule 'FunctionApp/template.bicep' = {
   name: 'functionApp-${buildNumber}'
   params:{
     location:location
-    rgName:resourceGroup().name
     functionAppName:funcAppName
     planName:aspModule.outputs.planId
   }

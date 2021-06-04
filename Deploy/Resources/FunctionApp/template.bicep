@@ -1,5 +1,4 @@
 param location string = 'tbd'
-param rgName string = 'tbd'
 param functionAppName string = 'tbd'
 param planName string = 'tbd'
 
@@ -37,5 +36,3 @@ output productionTenantId string = functionAppResource.identity.tenantId
 output productionPrincipalId string = functionAppResource.identity.principalId
 output stagingTenantId string = functionAppStagingSlot.identity.tenantId
 output stagingPrincipalId string = functionAppStagingSlot.identity.principalId
-
-output masterKey string = listkeys('${resourceId(rgName, 'Microsoft.Web/sites', functionAppName)}/host/default', '2018-11-01').masterKey
