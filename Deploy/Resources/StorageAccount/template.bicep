@@ -1,14 +1,16 @@
 param sgName string
 param location string = resourceGroup().location
 param sku string
+param kind string = 'StorageV2'
+param tier string = 'Standard'
 
 resource stg 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: sgName
   location: location
-  kind: 'StorageV2'
+  kind: kind
   sku:{
     name:sku
-    tier:'Standard'
+    tier:tier
   }
 }
 

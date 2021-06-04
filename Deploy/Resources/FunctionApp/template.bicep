@@ -1,6 +1,6 @@
-param location string = 'tbd'
-param functionAppName string = 'tbd'
-param planName string = 'tbd'
+param location string
+param functionAppName string
+param planName string
 
 resource functionAppResource 'Microsoft.Web/sites@2020-12-01' = {
   name: functionAppName

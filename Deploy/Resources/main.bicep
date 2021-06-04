@@ -4,7 +4,7 @@ param location string = resourceGroup().location
 @minLength(3)
 @maxLength(24)
 @description('The name of the storage account')
-param sgName string = 'tbd'
+param sgName string
 
 @allowed([
   'Standard_LRS'
@@ -12,13 +12,14 @@ param sgName string = 'tbd'
 ])
 param sku string = 'Standard_GRS'
 
-param appInsName string = 'tbd'
-param planName string = 'tbd'
-param planSku string = 'tbd'
-param planTier string = 'tbd'
-param keyVaultName string = 'tbd'
-param funcAppName string = 'tbd'
+param appInsName string
+param planName string
+param planSku string
+param planTier string
+param keyVaultName string
+param funcAppName string
 
+// Storage account
 module storageAccountModule './StorageAccount/template.bicep' = {
   name: 'storageAccount-${buildNumber}'
   params: {
@@ -28,34 +29,7 @@ module storageAccountModule './StorageAccount/template.bicep' = {
   }
 }
 
-
-module blah 'StorageAccount/template.bicep'=
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Application insights
 module appInsightsModule 'AppInsights/template.bicep' = {
   name:'appInsights-${buildNumber}'
   params:{
@@ -64,6 +38,7 @@ module appInsightsModule 'AppInsights/template.bicep' = {
   }
 }
 
+// App service plan
 module aspModule 'AppServicePlan/template.bicep' = {
   name:'appServicePlan-${buildNumber}'
   params:{
@@ -74,12 +49,12 @@ module aspModule 'AppServicePlan/template.bicep' = {
   }
 }
 
+// Key vault
 module keyVaultModule 'KeyVault/template.bicep' = {
   name:'keyVault-${buildNumber}'
   params:{
     location:location
-    keyVaultName:keyVaultName
-    functionAppName:funcAppName
+    keyVaultName:keyVaultName    
     storageConnectionString:storageAccountModule.outputs.storageAccountConnectionString
     productionPrincipalId:functionAppModule.outputs.productionPrincipalId
     productionTenantId:functionAppModule.outputs.productionTenantId
@@ -91,6 +66,7 @@ module keyVaultModule 'KeyVault/template.bicep' = {
   ]
 }
 
+// Function app (without settings)
 module functionAppModule 'FunctionApp/template.bicep' = {
   name: 'functionApp-${buildNumber}'
   params:{
@@ -104,6 +80,7 @@ module functionAppModule 'FunctionApp/template.bicep' = {
   ] 
 }
 
+// Function app settings
 module functionAppSettingsModule 'FunctionAppSettings/template.bicep' = {
   name: 'functionAppSettings-${buildNumber}'
   params: {

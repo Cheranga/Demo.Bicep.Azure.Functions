@@ -1,13 +1,12 @@
-param location string = 'tbd'
-param keyVaultName string = 'tbd'
-param functionAppName string = 'tbd'
+param location string
+param keyVaultName string
 param productionPrincipalId string
 param productionTenantId string
 param stagingPrincipalId string
 param stagingTenantId string
 
 @secure()
-param storageConnectionString string = 'tbd'
+param storageConnectionString string
 
 resource keyVault 'Microsoft.KeyVault/vaults@2016-10-01' = {
   name: keyVaultName
